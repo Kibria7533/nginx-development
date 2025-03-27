@@ -24,6 +24,9 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
 
+      # Check out the repository
+      - uses: actions/checkout@v2
+
       - name: Extract imageAppVersion from values.yaml
         id: get_version
         run: |

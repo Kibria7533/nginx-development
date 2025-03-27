@@ -85,6 +85,7 @@ jobs:
 Make sure you have the following secrets set in your GitHub repo:
 - `DOCKER_USER`: Your Docker Hub username
 - `DOCKER_PASSWORD`: Your Docker Hub password or access token
+  kubectl -n app-of-apps create secret docker-registry regcred --docker-username=xxxxxxx --docker-password=xxxxxxxxxxxxxx
 
 ---
 

@@ -1,0 +1,4 @@
+image:
+  dev_tag: "1.0.1"
+  staging_tag: "1.0.1"
+  prod_tag: "1.0.1"

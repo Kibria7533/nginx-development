@@ -1,0 +1,50 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI_dev
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+
+      - name: Extract imageAppVersion from values.yaml
+        id: get_version
+        run: |
+          image_version=$(yq eval '.image.dev_tag' ./versions.yaml)  
+          echo "Image Version: $image_version"
+          echo "IMAGE_VERSION=$image_version" >> $GITHUB_ENV
+          
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: "docker build"
+        run: "docker build -t ${{ secrets.DOCKER_USER }}/nginx-devlopment-dev:${{ env.IMAGE_VERSION }} ."
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: "docker push"
+        run: "docker push  ${{ secrets.DOCKER_USER }}/nginx-devlopment-dev:${{ env.IMAGE_VERSION }}"
+
+
